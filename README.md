@@ -15,131 +15,262 @@
     <img src="assets/warning.png" alt="mini-swe-agent.com" style="height: 7em" />
   </a>
 </p>
+SWE-Agent Intelligence Platform
+An enhanced software engineering agent platform built on top of SWE-Agent.
 
-> [!warning]
-> Most of our current development effort is on [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent/),
-> which has superseded SWE-agent. It matches the performance performance of SWE-agent, while being
-> much simpler.
-> See the [FAQ](https://mini-swe-agent.com/latest/faq/) for more details about the differences.
-> Our general recommendation is to use mini-SWE-agent instead of SWE-agent going forward.
+This project extends a coding agent beyond issue understanding, code editing, test execution, and patch generation. It adds repository intelligence, persistent memory, knowledge graphs, bug localization, research planning, and evaluation so agents can reason about a codebase before changing it.
 
+Why This Project
+Most coding agents are good at isolated tasks, but they usually lack:
 
-SWE-agent enables your language model of choice (e.g. GPT-4o or Claude Sonnet 4) to autonomously use tools to
-[fix issues in real GitHub repositories](https://swe-agent.com/latest/usage/hello_world),
-[find cybersecurity vulnerabilities](https://enigma-agent.com/), or
-[perform any custom task](https://swe-agent.com/latest/usage/coding_challenges).
+Long-term memory across issues
+Deep repository understanding
+Graph-based impact analysis
+Multi-agent workflows
+Bug localization before editing
+Evaluation dashboards
+Project-management style planning
+This project turns SWE-Agent into a more complete software engineering intelligence system.
 
-* ✅ **State of the art** on SWE-bench among open-source projects
-* ✅ **Free-flowing & generalizable**: Leaves maximal agency to the LM
-* ✅ **Configurable & fully documented**: Governed by a single `yaml` file
-* ✅ **Made for research**: Simple & hackable by design
+Current Features
+Repository Architect Agent
+Builds static architecture facts from a repository:
 
-SWE-agent is built and maintained by researchers from Princeton University and Stanford University.
+Python AST parsing
+File, module, class, and function summaries
+Import/dependency graph
+Function call graph
+Module containment graph
+Class inheritance and method relationships
+Technology detection
+Output:
 
-## 📣 News
+.sweagent/repository_architecture.json
+Knowledge Graph Agent
+Converts repository architecture into a graph representation.
 
-* July 24: [Mini-SWE-Agent](https://github.com/SWE-agent/mini-SWE-agent) achieves 65% on SWE-bench verified in 100 lines of python!
-* May 2: [SWE-agent-LM-32b](https://github.com/SWE-bench/SWE-smith) achieves open-weights SOTA on SWE-bench
-* Feb 28: [SWE-agent 1.0 + Claude 3.7 is SoTA on SWE-Bench full](https://x.com/KLieret/status/1895487966409298067)
-* Feb 25: [SWE-agent 1.0 + Claude 3.7 is SoTA on SWE-bench verified](https://x.com/KLieret/status/1894408819670733158)
-* Feb 13: [Releasing SWE-agent 1.0: SoTA on SWE-bench light & tons of new features](https://x.com/KLieret/status/1890048205448220849)
-* Dec 7: [An interview with the SWE-agent & SWE-bench team](https://www.youtube.com/watch?v=fcr8WzeEXyk)
+Outputs:
 
-## 🚀 Get started!
+.sweagent/knowledge_graph.json
+.sweagent/knowledge_graph.cypher
+The Cypher output can be loaded into Neo4j for repository reasoning such as:
 
-👉 Try SWE-agent in your browser: [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_in_GitHub_Codespaces-gray?logo=github)](https://codespaces.new/SWE-agent/SWE-agent) ([more information](https://swe-agent.com/latest/installation/codespaces/))
+What depends on this module?
+What classes inherit from this base class?
+What functions call this function?
+What could break if this service changes?
+Memory Agent
+Stores and retrieves agent memory.
 
-Read our [documentation][docs] to learn more:
+Memory types:
 
-* [Installation](https://swe-agent.com/latest/installation/source/)
-* [Hello world from the command line](https://swe-agent.com/latest/usage/hello_world/)
-* [Benchmarking on SWE-bench](https://swe-agent.com/latest/usage/batch_mode/)
-* [Frequently Asked Questions](https://swe-agent.com/latest/faq/)
+short_term: current task context
+long_term: previous issues and fixes
+semantic: important repository knowledge
+Example memory:
 
-[docs]: https://swe-agent.com
+Issue #35 root cause was JWT middleware validation.
+Storage:
 
-## SWE-agent for offensive cybersecurity (EnIGMA) <a name="enigma"></a>
+.sweagent/memory/*.jsonl
+Deep Research Agent
+Creates a research plan before coding.
 
-<img src="https://github.com/user-attachments/assets/84599168-11a7-4776-8a49-33dbf0758bb2" height="80px"></img>
+It generates source-aware queries for:
 
-[SWE-agent: EnIGMA][enigma] is a mode for solving offensive cybersecurity (capture the flag) challenges.
-EnIGMA achieves state-of-the-art results on multiple cybersecurity benchmarks (see [leaderboard](https://enigma-agent.com/#results)).
-Please use [SWE-agent 0.7](https://github.com/SWE-agent/SWE-agent/tree/v0.7) while we update EnIGMA for 1.0.
+Official documentation
+GitHub issues
+StackOverflow
+Security advisories
+Papers and technical references
+Output:
 
-[enigma]: https://enigma-agent.com
-[SWE-bench]: https://github.com/SWE-bench/SWE-bench
-[nyu-ctf]: https://arxiv.org/abs/2406.05590
+.sweagent/research/deep_research_plan.md
+.sweagent/research/deep_research_plan.json
+Bug Localization Agent
+Ranks likely files for an issue before the coding agent starts searching.
 
-In addition, you might be interested in our other projects:
+Signals used:
 
+Issue text
+File/module/class/function names
+Import graph centrality
+Memory matches
+Example output:
 
-<div align="center">
-  <a href="https://github.com/SWE-agent/mini-SWE-agent"><img src="docs/assets/mini_logo_text_below.svg" alt="Mini-SWE-Agent" height="120px"></a>
-   &nbsp;&nbsp;
-  <a href="https://github.com/SWE-agent/SWE-ReX"><img src="docs/assets/swerex_logo_text_below.svg" alt="SWE-ReX" height="120px"></a>
-   &nbsp;&nbsp;
-  <a href="https://github.com/SWE-bench/SWE-bench"><img src="docs/assets/swebench_logo_text_below.svg" alt="SWE-bench" height="120px"></a>
-  &nbsp;&nbsp;
-  <!-- <a href="https://github.com/SWE-agent/SWE-agent"><img src="docs/assets/sweagent_logo_text_below.svg" alt="SWE-agent" height="120px"></a> -->
-  <a href="https://github.com/SWE-bench/SWE-smith"><img src="docs/assets/swesmith_logo_text_below.svg" alt="SWE-smith" height="120px"></a>
-  &nbsp;&nbsp;
-  <a href="https://github.com/SWE-bench/sb-cli"><img src="docs/assets/sbcli_logo_text_below.svg" alt="sb-cli" height="120px"></a>
-</div>
+sweagent/agent/reviewer.py                 25.0%
+tests/test_agent.py                        19.4%
+sweagent/agent/agents.py                   13.9%
+sweagent/agent/history_processors.py        8.3%
+Output:
 
-## Contributions <a name="contributions"></a>
+.sweagent/bug_localization.json
+.sweagent/bug_localization.md
+Evaluation Agent
+Tracks agent performance over time.
 
-If you'd like to contribute to the codebase, we welcome [issues](https://github.com/SWE-agent/SWE-agent/issues) and [pull requests](https://github.com/SWE-agent/SWE-agent/pulls)! For larger code changes, we always encourage discussion in issues first.
+Example metrics:
 
-## Citation & contact <a name="citation"></a>
+Fix success rate
+Test pass rate
+Latency
+Cost
+Graph size
+Smoke test success
+Output:
 
-SWE-agent is an academic project started at Princeton University by John Yang*, Carlos E. Jimenez*, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and Ofir Press.
-Contact person: [John Yang](https://john-b-yang.github.io/), [Carlos E. Jimenez](http://www.carlosejimenez.com/), and [Kilian Lieret](https://www.lieret.net/) (Email: johnby@stanford.edu, carlosej@cs.princeton.edu, kl5675@princeton.edu).
+.sweagent/evaluation/runs.jsonl
+.sweagent/evaluation/dashboard.md
+Architecture
+Repository
+   |
+   v
+Repository Architect Agent
+   |
+   +--> repository_architecture.json
+   |
+   v
+Knowledge Graph Agent
+   |
+   +--> knowledge_graph.json
+   +--> knowledge_graph.cypher
+   |
+   v
+Bug Localization Agent
 
-If you found this work helpful, please consider citing it using the following:
+Issue
+   |
+   +--> Deep Research Agent
+   +--> Memory Agent
+   +--> Bug Localization Agent
 
-<details>
-<summary> SWE-agent citation</summary>
+Agent Runs
+   |
+   v
+Evaluation Agent
+Tech Stack
+Current local-first implementation:
 
-```bibtex
-@inproceedings{yang2024sweagent,
-  title={{SWE}-agent: Agent-Computer Interfaces Enable Automated Software Engineering},
-  author={John Yang and Carlos E Jimenez and Alexander Wettig and Kilian Lieret and Shunyu Yao and Karthik R Narasimhan and Ofir Press},
-  booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
-  year={2024},
-  url={https://arxiv.org/abs/2405.15793}
-}
-```
-</details>
+Python
+AST static analysis
+JSON / JSONL artifacts
+Markdown reports
+Neo4j-compatible Cypher export
+Planned production stack:
 
-If you used the summarizer, interactive commands or the offensive cybersecurity capabilities in SWE-agent, please also consider citing:
+FastAPI backend
+React dashboard
+Neo4j for repository graphs
+Qdrant or Weaviate for vector memory
+PostgreSQL for tasks, issues, PRs, and agent runs
+Redis and Celery for background jobs
+Docker sandboxes for safe execution
+Prometheus and Grafana for metrics
+LangGraph for multi-agent orchestration
+Quick Start
+From the repository root:
 
-<details>
-<summary>EnIGMA citation</summary>
+python3 -m sweagent.run.run repo-architect . --summary
+Build the knowledge graph:
 
-```bibtex
-@misc{abramovich2024enigmaenhancedinteractivegenerative,
-      title={EnIGMA: Enhanced Interactive Generative Model Agent for CTF Challenges},
-      author={Talor Abramovich and Meet Udeshi and Minghao Shao and Kilian Lieret and Haoran Xi and Kimberly Milner and Sofija Jancheska and John Yang and Carlos E. Jimenez and Farshad Khorrami and Prashanth Krishnamurthy and Brendan Dolan-Gavitt and Muhammad Shafique and Karthik Narasimhan and Ramesh Karri and Ofir Press},
-      year={2024},
-      eprint={2409.16165},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2409.16165},
-}
-```
-</details>
+python3 -m sweagent.run.run knowledge-graph .sweagent/repository_architecture.json
+Add a memory:
 
+python3 -m sweagent.run.run memory add "Issue #35 root cause was JWT middleware validation." --metadata issue=35
+Search memory:
 
-## 🪪 License <a name="license"></a>
-MIT. Check `LICENSE`.
+python3 -m sweagent.run.run memory search "JWT middleware"
+Create a research plan:
 
+python3 -m sweagent.run.run deep-research "Memory leak in FastAPI middleware" --architecture .sweagent/repository_architecture.json
+Localize a bug:
 
-<div align="center">
+python3 -m sweagent.run.run bug-localize "Model retry loop fails when history processor truncates context window" --architecture .sweagent/repository_architecture.json
+Record evaluation metrics:
 
-[![Pytest](https://github.com/SWE-agent/SWE-agent/actions/workflows/pytest.yaml/badge.svg)](https://github.com/SWE-agent/SWE-agent/actions/workflows/pytest.yaml)
-[![build-docs](https://github.com/SWE-agent/SWE-agent/actions/workflows/build-docs.yaml/badge.svg)](https://github.com/SWE-agent/SWE-agent/actions/workflows/build-docs.yaml)
-[![codecov](https://codecov.io/gh/SWE-agent/SWE-agent/graph/badge.svg?token=18XAVDK365)](https://codecov.io/gh/SWE-agent/SWE-agent)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/SWE-agent/SWE-agent/main.svg)](https://results.pre-commit.ci/latest/github/SWE-agent/SWE-agent/main)
-[![Markdown links](https://github.com/SWE-agent/SWE-agent/actions/workflows/check-links-periodic.yaml/badge.svg)](https://github.com/SWE-agent/SWE-agent/actions/workflows/check-links-periodic.yaml)
+python3 -m sweagent.run.run evaluation record demo-run --metric fix_success=1 --metric latency_seconds=42 --metric cost_usd=0.18
+Create an evaluation dashboard:
 
-</div>
+python3 -m sweagent.run.run evaluation dashboard
+Generated Artifacts
+.sweagent/
+  README.md
+  repository_architecture.json
+  knowledge_graph.json
+  knowledge_graph.cypher
+  bug_localization.json
+  bug_localization.md
+  memory/
+    long_term.jsonl
+  research/
+    deep_research_plan.json
+    deep_research_plan.md
+  evaluation/
+    runs.jsonl
+    dashboard.md
+Project Structure
+sweagent/
+  intelligence/
+    repository_architect.py
+    knowledge_graph.py
+    memory_agent.py
+    deep_research.py
+    bug_localization.py
+    evaluation_agent.py
+  run/
+    repository_architect.py
+    knowledge_graph.py
+    memory.py
+    deep_research.py
+    bug_localization.py
+    evaluation.py
+docs/
+  intelligence_agents.md
+tests/
+  test_repository_architect.py
+  test_knowledge_graph.py
+  test_memory_agent.py
+  test_deep_research.py
+  test_bug_localization.py
+  test_evaluation_agent.py
+Roadmap
+Next Agents
+Test Generation Agent
+Security Agent
+PR Review Agent
+Refactoring Agent
+Pull Request Agent
+Project Manager Agent
+Dashboard
+Planned React dashboard:
+
+Repository view
+Interactive dependency graph
+Agent monitoring
+Memory explorer
+Bug localization view
+PR review dashboard
+Cost dashboard
+Evaluation dashboard
+Production Infrastructure
+Neo4j-backed graph queries
+Qdrant-backed semantic memory
+PostgreSQL-backed tasks and agent runs
+Docker sandbox execution
+LangGraph orchestration
+Prometheus/Grafana monitoring
+Interview Pitch
+This project extends SWE-Agent from a coding executor into a repository-aware multi-agent system. It builds a static and semantic understanding of the codebase, stores long-term memory from previous fixes, localizes bugs before editing, creates research plans before coding, and evaluates agent performance over time.
+
+The result is a stronger software engineering agent architecture that combines static analysis, knowledge graphs, memory, agent orchestration, and evaluation.
+
+Attribution
+This project is based on the open-source SWE-Agent project from Princeton University and Stanford University researchers.
+
+Original project:
+
+https://github.com/SWE-agent/SWE-agent
+This repository adds an experimental intelligence layer for portfolio, research, and interview demonstration purposes.
+
+License
+The original SWE-Agent project is licensed under the MIT License. See LICENSE.
